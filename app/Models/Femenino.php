@@ -14,7 +14,8 @@ class Femenino extends Jugador
 
     public function puntaje(): int
     {
-        return ($this->habilidad * 0.5) + ($this->reaccion * 0.4);
+        $suerte = random_int(0, 10);
+        return ($this->habilidad * 0.5) + ($this->reaccion * 0.4) + $suerte;
     }
 
 

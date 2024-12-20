@@ -28,9 +28,9 @@ class TorneoService {
 
 
     private function calcularPuntaje(Jugador $jugador){
-        $suerte = random_int(0, 10);
+        //$suerte = random_int(0, 10);
         $puntaje = $jugador->puntaje();
-        return $puntaje + $suerte;
+        return $puntaje; //+ $suerte;
     }
 
     public function saveTorneo($nombreGanador, $cantidadJugadores, $tipoTorneo){

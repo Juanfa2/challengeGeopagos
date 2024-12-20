@@ -16,7 +16,8 @@ class Masculino extends Jugador
 
     public function puntaje(): int
     {
-        return ($this->habilidad * 0.5) + ($this->fuerza * 0.3) + ($this->velocidad * 0.2);
+        $suerte = random_int(0, 10);
+        return ($this->habilidad * 0.5) + ($this->fuerza * 0.3) + ($this->velocidad * 0.2) + $suerte;
     }
 
 }
