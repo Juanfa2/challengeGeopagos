@@ -21,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('torneoMasculino', [TorneoController::class, 'torneoMasculino']);
 Route::get('torneoFemenino', [TorneoController::class, 'torneoFemenino']);
+Route::resource('torneos', TorneoController::class);

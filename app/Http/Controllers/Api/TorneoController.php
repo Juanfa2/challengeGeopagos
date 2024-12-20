@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\GetTorneoRequest;
+use App\Http\Requests\TorneoFemeninoRequest;
+use App\Http\Requests\TorneoMasculinoRequest;
+use App\Http\Resources\TorneoResource;
 use App\Models\Femenino;
-use App\Models\Jugador;
 use App\Models\Masculino;
+use App\Models\Torneo;
 use App\Services\TorneoService;
-use Illuminate\Support\Collection;
+use Exception;
 use Illuminate\Http\Request;
 
 class TorneoController extends Controller
@@ -20,9 +24,24 @@ class TorneoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(GetTorneoRequest $request)
     {
-        echo 'hola';
+        $fecha = $request->input('fecha') != null ?  \Carbon\Carbon::createFromFormat('d/m/Y', $request->input('fecha'))->format('Y-m-d') : null;
+        $tipoTorneo = $request->input('tipo') != null ? $request->input('tipo') : '';
+        $nombreGanador = $request->input('nombreGanador') != null ? $request->input('nombreGanador') : '';
+
+        $torneos = Torneo::select('id','nombreGanador', 'tipoTorneo', 'cantidadJugadores', 'created_at')
+            ->when($fecha, function ($query) use ($fecha){
+                return $query->whereDate('created_at',$fecha);
+            })->when($tipoTorneo, function($query) use ($tipoTorneo){
+                return $query->where('tipoTorneo', $tipoTorneo);
+            })->when($nombreGanador, function($query) use ($nombreGanador){
+                return $query->where('nombreGanador', 'like', '%' . $nombreGanador . '%');
+            })->get();
+        return response()->json([
+            'data' => TorneoResource::collection($torneos),
+        ]);
+
     }
 
     /**
@@ -36,9 +55,11 @@ class TorneoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Torneo $torneo)
     {
-        //
+        return response()->json([
+            'data' => new TorneoResource($torneo),
+        ]);
     }
 
     /**
@@ -57,41 +78,53 @@ class TorneoController extends Controller
         //
     }
 
-    public function torneoFemenino(Request $request){
-        /*VALIDAR LOS DATOS*/
+    public function torneoFemenino(TorneoFemeninoRequest $request){
+        try {
+            $jugadores = collect($request->validated())->map(function ($data) {
+                return new Femenino(
+                    $data['nombre'],
+                    $data['habilidad'],
+                    $data['reaccion']);
+            });
 
-        $jugadores = collect($request->request)->map(function ($data) {
-            return new Femenino(
-                $data['nombre'],
-                $data['habilidad'],
-                $data['reaccion']);
-        });
+            $ganadora = $this->torneoService->jugarTorneo($jugadores);
 
-        $ganadora = $this->torneoService->jugarTorneo($jugadores);
+            $this->torneoService->saveTorneo($ganadora->nombre,$jugadores->count(),'Femenino');
 
-        return response()->json([
-            'message' => 'Torneo finalizado',
-            'ganadora' => $ganadora,
-        ]);
+            return response()->json([
+                'mensaje' => 'Torneo finalizado',
+                'ganadora' => $ganadora,
+            ]);
+        }catch (Exception $e){
+            return response()->json([
+                'error' => $e->getMessage()
+            ],$e->getCode());
+        }
     }
 
 
-    public function torneoMasculino (Request $request){
-        /*VALIDAR LOS DATOS*/
-        $jugadores = collect($request->request)->map(function ($data) {
-            return new Masculino(
-                $data['nombre'],
-                $data['habilidad'],
-                $data['velocidad'],
-                $data['fuerza']);
-        });
+    public function torneoMasculino (TorneoMasculinoRequest $request){
+        try {
+            $jugadores = collect($request->validated())->map(function ($data) {
+                return new Masculino(
+                    $data['nombre'],
+                    $data['habilidad'],
+                    $data['velocidad'],
+                    $data['fuerza']);
+            });
 
-        $ganador = $this->torneoService->jugarTorneo($jugadores);
+            $ganador = $this->torneoService->jugarTorneo($jugadores);
 
-        return response()->json([
-            'message' => 'Torneo finalizado',
-            'ganador' => $ganador,
-        ]);
+            $this->torneoService->saveTorneo($ganador->nombre,$jugadores->count(),'Masculino');
+            return response()->json([
+                'mensaje' => 'Torneo finalizado',
+                'ganador' => $ganador,
+            ]);
+        }catch (Exception $e){
+            return response()->json([
+                'error' => $e->getMessage()
+            ],$e->getCode());
+        }
     }
 
 

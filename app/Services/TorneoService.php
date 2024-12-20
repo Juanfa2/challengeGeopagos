@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Jugador;
+use App\Models\Torneo;
+use Exception;
 use Illuminate\Support\Collection;
 
 class TorneoService {
@@ -29,5 +31,19 @@ class TorneoService {
         $suerte = random_int(0, 10);
         $puntaje = $jugador->puntaje();
         return $puntaje + $suerte;
+    }
+
+    public function saveTorneo($nombreGanador, $cantidadJugadores, $tipoTorneo){
+        try {
+
+            $torneo = Torneo::create([
+                "nombreGanador" => $nombreGanador,
+                "cantidadJugadores"  => $cantidadJugadores,
+                "tipoTorneo"  => $tipoTorneo
+            ]);
+            return $torneo;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage(), 500);
+        }
     }
 }
