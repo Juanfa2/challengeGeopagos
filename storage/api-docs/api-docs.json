@@ -1,0 +1,450 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Challenge Geopagos Documentacion",
+        "description": "Challenge para Geopagos. Torneo de tenis",
+        "contact": {
+            "email": "juanfrancisco.m.sanchez@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000"
+        }
+    ],
+    "paths": {
+        "/api/torneos": {
+            "get": {
+                "tags": [
+                    "Torneos"
+                ],
+                "summary": "Get torneos",
+                "description": "Obtiene los torneos segun los filtros (fecha,tipo,nombreGanador)",
+                "operationId": "923690cef381958f7d14f450b8efb889",
+                "parameters": [
+                    {
+                        "name": "fecha",
+                        "in": "query",
+                        "description": "Fecha del torneo en formato d/m/Y",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "20/12/2024"
+                        }
+                    },
+                    {
+                        "name": "tipo",
+                        "in": "query",
+                        "description": "Tipo de torneo (Masculino, Femenino)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Masculino"
+                        }
+                    },
+                    {
+                        "name": "nombreGanador",
+                        "in": "query",
+                        "description": "Nombre del ganador del torneo",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Jose"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de torneos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "number",
+                                                        "example": "1"
+                                                    },
+                                                    "ganador": {
+                                                        "type": "string",
+                                                        "example": "Jose"
+                                                    },
+                                                    "tipo_torneo": {
+                                                        "type": "string",
+                                                        "example": "Masculino"
+                                                    },
+                                                    "cantidad_jugadores": {
+                                                        "type": "string",
+                                                        "example": "8"
+                                                    },
+                                                    "fecha_torneo": {
+                                                        "type": "string",
+                                                        "example": "20/12/2024"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/torneos/{id}": {
+            "get": {
+                "tags": [
+                    "Torneos"
+                ],
+                "summary": "Detalles de un torneo",
+                "description": "Devuelve los detalles de un torneo pasado como parametro.",
+                "operationId": "15f9a81fa299d2ba3c057a41afbc3651",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id del torneo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del torneo",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "ganador": {
+                                                    "type": "string",
+                                                    "example": "Jose"
+                                                },
+                                                "tipo_torneo": {
+                                                    "type": "string",
+                                                    "example": "Masculino"
+                                                },
+                                                "cantidad_jugadores": {
+                                                    "type": "string",
+                                                    "example": "8"
+                                                },
+                                                "fecha_torneo": {
+                                                    "description": "Fecha del torneo en formato d/m/Y",
+                                                    "type": "string",
+                                                    "example": "20/12/2024"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Error: Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "El recurso solicitado no existe"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/torneoFemenino": {
+            "get": {
+                "tags": [
+                    "Torneo"
+                ],
+                "summary": "Inicia Torneo Femenino",
+                "description": "Recibe una lista de jugadoras con sus atributos(nombre,habilidad,reaccion) y devuelve la ganadora del torneo.",
+                "operationId": "703f7ab600794c1dae7faf7e3d3e430e",
+                "requestBody": {
+                    "description": "Lista de jugadoras con sus atributos, potencias de dos",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "required": [
+                                        "nombre",
+                                        "habilidad",
+                                        "fuerza",
+                                        "velocidad"
+                                    ],
+                                    "properties": {
+                                        "nombre": {
+                                            "type": "string",
+                                            "example": "Lucia"
+                                        },
+                                        "habilidad": {
+                                            "type": "integer",
+                                            "example": 90
+                                        },
+                                        "reaccion": {
+                                            "type": "integer",
+                                            "example": 100
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "example": [
+                                {
+                                    "nombre": "Lucia",
+                                    "habilidad": 90,
+                                    "reaccion": 100
+                                },
+                                {
+                                    "nombre": "Maria",
+                                    "habilidad": 80,
+                                    "reaccion": 85
+                                }
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Torneo finalizado con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "mensaje": {
+                                            "type": "string",
+                                            "example": "Torneo finalizado"
+                                        },
+                                        "ganadora": {
+                                            "properties": {
+                                                "nombre": {
+                                                    "type": "string",
+                                                    "example": "Lucia"
+                                                },
+                                                "habilidad": {
+                                                    "type": "integer",
+                                                    "example": 90
+                                                },
+                                                "reaccion": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en la solicitud",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Datos inválidos"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/torneoMasculino": {
+            "get": {
+                "tags": [
+                    "Torneo"
+                ],
+                "summary": "Inicia Torneo Masculino",
+                "description": "Recibe una lista de jugadores con sus atributos(nombre,habilidad,fuerza,velocidad) y devuelve el ganador del torneo.",
+                "operationId": "ca515d02223e93cdfa3773a64f639ec4",
+                "requestBody": {
+                    "description": "Lista de jugadores con sus atributos, potencias de dos",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "required": [
+                                        "nombre",
+                                        "habilidad",
+                                        "fuerza",
+                                        "velocidad"
+                                    ],
+                                    "properties": {
+                                        "nombre": {
+                                            "type": "string",
+                                            "example": "Pedro"
+                                        },
+                                        "habilidad": {
+                                            "type": "integer",
+                                            "example": 90
+                                        },
+                                        "fuerza": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "velocidad": {
+                                            "type": "integer",
+                                            "example": 30
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            },
+                            "example": [
+                                {
+                                    "nombre": "Pedro",
+                                    "habilidad": 90,
+                                    "fuerza": 100,
+                                    "velocidad": 30
+                                },
+                                {
+                                    "nombre": "Jose",
+                                    "habilidad": 90,
+                                    "fuerza": 60,
+                                    "velocidad": 85
+                                }
+                            ]
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Torneo finalizado con éxito",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "mensaje": {
+                                            "type": "string",
+                                            "example": "Torneo finalizado"
+                                        },
+                                        "ganador": {
+                                            "properties": {
+                                                "nombre": {
+                                                    "type": "string",
+                                                    "example": "Jose"
+                                                },
+                                                "habilidad": {
+                                                    "type": "integer",
+                                                    "example": 90
+                                                },
+                                                "velocidad": {
+                                                    "type": "integer",
+                                                    "example": 60
+                                                },
+                                                "fuerza": {
+                                                    "type": "integer",
+                                                    "example": 85
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error en la solicitud",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "torneo": {
+                "title": "Torneo",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombreGanador": {
+                        "type": "string",
+                        "example": "Jose"
+                    },
+                    "tipoTorneo": {
+                        "type": "string",
+                        "example": "Masculino"
+                    },
+                    "cantidadJugadores": {
+                        "type": "string",
+                        "example": "8"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-19 23:29:07"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-12-19 23:29:07"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Torneos",
+            "description": "Torneos"
+        },
+        {
+            "name": "Torneo",
+            "description": "Torneo"
+        }
+    ]
+}
